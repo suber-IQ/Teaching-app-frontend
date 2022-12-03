@@ -1,0 +1,7 @@
+.course{
+    margin-top: 2rem;
+    transition: all 0.5s;
+}
+.course:hover{
+    transform: translateY(-10px);
+}
