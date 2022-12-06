@@ -31,6 +31,7 @@ const Header = () => {
        width={"12"}
        height={"12"}
        rounded="full"
+       zIndex={"overlay"}
        position={"fixed"}
        top={"6"}
        left={"6"}

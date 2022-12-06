@@ -108,7 +108,7 @@ const Courses = () => {
         title={"Sample"}
         description={"Sample lite"} 
         views={23}
-        imageSrc={"Sample"}
+        imageSrc={"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.edQKztD6G9khB_APGqkhOwHaEK%26pid%3DApi&f=1&ipt=a2f6e728a6783c2416be6841a8e1d10aa09bce9a64bdc4ce43cfc83dfd1f825c&ipo=images"}
         id={"Sample id"}
         creator={"Sumit Kumar"}
         lectureCount={2}
