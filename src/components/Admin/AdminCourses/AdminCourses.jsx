@@ -15,43 +15,66 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from '../Sidebar';
 import cursor from '../../../assets/images/cursor.png';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import CourseModal from './CourseModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllCourses, getCourseLectures } from '../../../redux/actions/courses';
+import { deleteCourse, deleteLecture } from '../../../redux/actions/admin';
+import { toast } from 'react-hot-toast';
+import { addLecture } from '../../../redux/actions/admin';
 
 const AdminCourses = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const courses = [
-    {
-      _id: 'jllasfjla',
-      title: 'Rectjs',
-      category: 'web development',
-      poster: {
-        url: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.edQKztD6G9khB_APGqkhOwHaEK%26pid%3DApi&f=1&ipt=a2f6e728a6783c2416be6841a8e1d10aa09bce9a64bdc4ce43cfc83dfd1f825c&ipo=images',
-      },
-      createdBy: 'suber-Iq',
-      views: 123,
-      numOfVideos: 23,
-    },
-  ];
+ 
+  const { courses, lectures } = useSelector(state => state.course);
+  const { loading,error,message } = useSelector(state => state.admin);
+  const [courseId, setCourseId] = useState("")
+  const [courseTitle, setCourseTitle] = useState("")
+  const dispatch = useDispatch()
 
-  const courseDetailsHandler = userId => {
+  const courseDetailsHandler = (courseId,title) => {
+    dispatch(getCourseLectures(courseId))
     onOpen();
+    setCourseId(courseId)
+    setCourseTitle(title)
   };
-  const deleteButtonHandler = userId => {
-    console.log(userId);
+  const deleteButtonHandler = (courseId) => {
+    dispatch(deleteCourse(courseId));
   };
-  const deleteLectureButtonHandler = (courseId, lectureId) => {
-    console.log(courseId);
-    console.log(lectureId);
+  const deleteLectureButtonHandler = async (courseId, lectureId) => {
+   await dispatch(deleteLecture(courseId,lectureId));
+   dispatch(getCourseLectures(courseId))
   };
-  const addLectureHandler = (e,courseId, title, description, video) => {
+  const addLectureHandler = async (e,courseId, title, description, video) => {
     e.preventDefault();
+    const myForm = new FormData();
+
+    myForm.append('title',title);
+    myForm.append('description',description);
+    myForm.append('file',video);
+
+   await dispatch(addLecture(courseId,myForm))
+   dispatch(getCourseLectures(courseId))
+
 
   }
+
+  useEffect(() => {
+    if(error){
+      toast.error(error)
+      dispatch({ type: 'clearError'})
+    }
+    if(message){
+      toast.success(message)
+      dispatch({ type: 'clearMessage'})
+    }
+    dispatch(getAllCourses());
+  }, [dispatch,error,message])
+  
 
   return (
     <Grid
@@ -64,7 +87,7 @@ const AdminCourses = () => {
       <Box p={['0', '8']} overflowX="auto">
         <Heading
           textTransform={'uppercase'}
-          children="All Users"
+          children="All Courses"
           my={'16'}
           textAlign={['center', 'left']}
         />
@@ -76,19 +99,20 @@ const AdminCourses = () => {
                 <Th>Id</Th>
                 <Th>Poster</Th>
                 <Th>Title</Th>
-                <Th>Creator</Th>
-                <Th isNumeric>Views</Th>
-                <Th isNumeric>Lectures</Th>
-                <Th isNumeric>Action</Th>
+                <Th>category</Th>
+                <Th>CreadedBy</Th>
+                <Th isNumeric>views</Th>
+                <Th isNumeric>lectures</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {courses.map(item => (
+              {courses && courses.map(item => (
                 <Row
                   courseDetailsHandler={courseDetailsHandler}
                   deleteButtonHandler={deleteButtonHandler}
                   key={item._id}
                   item={item}
+                  loading={loading}
                 />
               ))}
             </Tbody>
@@ -97,10 +121,12 @@ const AdminCourses = () => {
         <CourseModal
           isOpen={isOpen}
           onClose={onClose}
-          id={"alsjflasjfl"}
-          courseTitle="React Course"
+          id={courseId}
+          courseTitle={courseTitle}
           deleteButtonHandler={deleteLectureButtonHandler}
           addLectureHandler={addLectureHandler}
+          lectures={lectures}
+          loading={loading}
         />
       </Box>
       <Sidebar />
@@ -108,7 +134,7 @@ const AdminCourses = () => {
   );
 };
 
-function Row({ item, courseDetailsHandler, deleteButtonHandler }) {
+function Row({ item, courseDetailsHandler, deleteButtonHandler,loading }) {
   return (
     <Tr>
       <Td>{item._id}</Td>
@@ -123,15 +149,17 @@ function Row({ item, courseDetailsHandler, deleteButtonHandler }) {
       <Td isNumeric>
         <HStack justifyContent={'flex-end'}>
           <Button
-            onClick={() => courseDetailsHandler(item._id)}
+            onClick={() => courseDetailsHandler(item._id,item.title)}
             variant={'outline'}
             color="purple.500"
+            isLoading={loading}
           >
             View Lectures
           </Button>
           <Button
             onClick={() => deleteButtonHandler(item._id)}
             color={'purple.600'}
+            isLoading={loading}
           >
             <RiDeleteBin7Fill />
           </Button>

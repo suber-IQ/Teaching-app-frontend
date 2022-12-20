@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
-import { Avatar, Box, Button, Container, FormLabel, Heading, Input, VStack } from '@chakra-ui/react'
+import { Avatar, Box, Button, Container, FormLabel, Heading, Input, InputGroup, VStack } from '@chakra-ui/react'
 import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { register } from '../../redux/actions/user'
+import { ShowHide } from './Login'
 
 export const fileUploadCss = {
     cursor: "pointer",
@@ -23,6 +26,10 @@ const Register = () => {
     const [password, setPassword] = useState("")
     const [imagePrev, setImagePrev] = useState("")
     const [image, setImage] = useState("")
+    const [show, setShow] = useState(false)
+
+
+    const dispatch = useDispatch();
 
     const changeFileHandler = (e) => {
         const file = e.target.files[0];
@@ -33,12 +40,25 @@ const Register = () => {
             setImage(file)
         }
     }
+    const handleClick = () => {
+      setShow(!show)
+    }
+
+    const submitHandler = (e) => {
+      e.preventDefault();
+      const myForm = new FormData();
+      myForm.append("name",name)
+      myForm.append("email",email)
+      myForm.append("password",password)
+      myForm.append("file",image)
+      dispatch(register(myForm))
+    }
 
   return (
     <Container h={"95vh"}>
         <VStack h={"full"} justifyContent="center" spacing={"16"}>
          <Heading children={"Welcome to CourseBundler"} />
-         <form style={{ width: "100%"}}>
+         <form onSubmit={submitHandler} style={{ width: "100%"}}>
             <Box my={"4"} display="flex" justifyContent={"center"} >
                 <Avatar src={imagePrev} size="2xl" />
             </Box>
@@ -68,15 +88,18 @@ const Register = () => {
            </Box>
            <Box my={"4"}>
            <FormLabel htmlFor='password' children="Password" />
+            <InputGroup>
             <Input
              required
               id='password'
                value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Enter Your Password"
-                type={"password"}
+                type={show ? 'text' : 'password'}
                 focusBorderColor="yellow.500"
              />
+             <ShowHide show={show} handleClick={handleClick} />
+            </InputGroup>
            </Box>
            <Box my={"4"}>
            <FormLabel htmlFor='chooseAvatar' children="Choose Avatar" />
