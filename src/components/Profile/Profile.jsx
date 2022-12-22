@@ -34,6 +34,7 @@ const Profile = ({ user }) => {
   const dispatch = useDispatch();
 
   const { loading, message, error } = useSelector(state => state.profile);
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const {
     loading: subscriptionLoading,
     message: subscriptionMessage,
@@ -66,19 +67,17 @@ const Profile = ({ user }) => {
       toast.success(message);
       dispatch({ type: 'clearMessage' });
     }
-    if(subscriptionError){
+    if (subscriptionError) {
       toast.error(subscriptionError);
       dispatch({ type: 'clearError' });
-
     }
     if (subscriptionMessage) {
       toast.success(subscriptionMessage);
       dispatch({ type: 'clearMessage' });
-      dispatch(loadUser());
     }
+   
   }, [dispatch, error, message,subscriptionError,subscriptionMessage]);
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
 
   return (
     <Container minH={'95vh'} maxW="container.lg" py={'8'}>

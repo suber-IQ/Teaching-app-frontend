@@ -53,7 +53,7 @@ export const userReducer = createReducer(
     },
 
     // Get My profile
-    loadUserRequest: state => {
+    loadUserRequest: (state) => {
       state.loading = true;
     },
     loadUserSuccess: (state, action) => {
@@ -66,6 +66,7 @@ export const userReducer = createReducer(
       state.isAuthenticated = false;
       state.error = action.payload;
     },
+    
     clearError: state => {
       state.error = null;
     },

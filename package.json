@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy":"https://course-bundler-backend.vercel.app",
   "dependencies": {
     "@chakra-ui/react": "^2.4.1",
     "@emotion/react": "^11.10.5",

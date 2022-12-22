@@ -17,7 +17,7 @@ export const otherReducer = createReducer(
 
     // Course Request
 
-    courseRequestRequest: state => {
+    courseRequestRequest: (state) => {
       state.loading = true;
     },
     courseRequestSuccess: (state, action) => {
